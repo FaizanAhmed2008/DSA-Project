@@ -41,21 +41,24 @@ export default function RankingTable({ students, subjectId, step, finished }: Ra
 
           {students.map((student, idx) => {
             const marks = student.marks[subjectId] ?? 0
-            const isLeft = step !== null && idx === step.i
-            const isRight = step !== null && idx === step.j
-            const comparing = isLeft || isRight
-            const swap = comparing && step.swap
-            const locked = step !== null && idx >= n - step.lockedCount
+            const isComparing = step?.comparing
+              ? step.comparing.includes(idx)
+              : step !== null && (idx === step.i || idx === step.j)
+            const isSwap = isComparing && step?.action === 'swap'
+            const isLocked = step?.sortedIndexes
+              ? step.sortedIndexes.includes(idx)
+              : step !== null && idx >= n - step.lockedCount
 
-            const leftBorder = comparing
-              ? swap
+            const leftBorder = isComparing
+              ? isSwap
                 ? 'border-l-warning'
                 : 'border-l-accent'
-              : locked
+              : isLocked
                 ? 'border-l-success/70'
                 : 'border-l-transparent'
 
-            const tint = comparing ? (swap ? 'bg-warning/10' : 'bg-accent/5') : ''
+            const tint = isComparing ? (isSwap ? 'bg-warning/10' : 'bg-accent/5') : ''
+
 
             return (
               <motion.div
@@ -77,7 +80,7 @@ export default function RankingTable({ students, subjectId, step, finished }: Ra
                     </>
                   ) : (
                     <span
-                      className={`text-sm tabular-nums ${locked ? 'text-success' : 'text-muted'}`}
+                      className={`text-sm tabular-nums ${isLocked ? 'text-success' : 'text-muted'}`}
                     >
                       {idx + 1}
                     </span>
@@ -89,13 +92,14 @@ export default function RankingTable({ students, subjectId, step, finished }: Ra
                     {student.name.charAt(0).toUpperCase()}
                   </span>
                   <span className="truncate text-sm text-ink">{student.name}</span>
-                  {locked && !finished && (
+                  {isLocked && !finished && (
                     <span
                       className="size-1.5 shrink-0 rounded-full bg-success/70"
                       title="Final position"
                     />
                   )}
                 </div>
+
 
                 <div role="cell" className="text-sm tabular-nums text-muted">
                   {student.rollNo}
@@ -104,11 +108,12 @@ export default function RankingTable({ students, subjectId, step, finished }: Ra
                 <div
                   role="cell"
                   className={`text-right text-sm font-semibold tabular-nums ${
-                    swap ? 'text-warning' : 'text-ink'
+                    isSwap ? 'text-warning' : 'text-ink'
                   }`}
                 >
                   {marks}
                 </div>
+
               </motion.div>
             )
           })}

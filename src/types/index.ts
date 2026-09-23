@@ -15,9 +15,13 @@ export interface ComparedValue {
   marks: number
 }
 
+export type StepAction = 'compare' | 'swap' | 'no-swap' | 'complete'
+
 export interface SortStep {
   pass: number
   totalPasses: number
+  stepIndex: number
+  totalSteps: number
   comparisonInPass: number
   comparisonsInPass: number
   comparisonCount: number
@@ -25,8 +29,12 @@ export interface SortStep {
   array: Student[]
   i: number
   j: number
+  comparing: [number, number] | null
   left: ComparedValue
   right: ComparedValue
   swap: boolean
+  action: StepAction
+  message: string
+  sortedIndexes: number[]
   lockedCount: number
 }

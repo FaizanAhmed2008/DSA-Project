@@ -28,6 +28,16 @@ export function NextIcon({ className }: IconProps) {
   )
 }
 
+export function PrevIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <rect x="4.6" y="5" width="2.4" height="14" rx="1.2" />
+      <path d="M18 5.14v13.72c0 .8-.87 1.3-1.56.88l-11-6.86a1.04 1.04 0 0 1 0-1.76l11-6.86A1.04 1.04 0 0 1 18 5.14Z" />
+    </svg>
+  )
+}
+
+
 export function ResetIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
@@ -92,6 +102,50 @@ export function CheckIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
       <path d="M20 6 9 17l-5-5" />
+    </svg>
+  )
+}
+
+export function SparklesIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z" />
+    </svg>
+  )
+}
+
+export function UserIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  )
+}
+
+export function BookOpenIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+    </svg>
+  )
+}
+
+export function SwapIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M7 16V4m0 0L3 8m4-4l4 4" />
+      <path d="M17 8v12m0 0l4-4m-4 4l-4-4" />
+    </svg>
+  )
+}
+
+export function CodeIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
     </svg>
   )
 }

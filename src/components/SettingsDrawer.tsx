@@ -54,6 +54,7 @@ export default function SettingsDrawer({
   const [newName, setNewName] = useState('')
   const [newRoll, setNewRoll] = useState('')
   const [newMarks, setNewMarks] = useState('')
+  const [studentError, setStudentError] = useState<string | null>(null)
 
   const activeSubject = subjects.find((s) => s.id === activeSubjectId)
 
@@ -73,13 +74,32 @@ export default function SettingsDrawer({
   }
 
   const submitStudent = () => {
+    setStudentError(null)
     const name = newName.trim()
-    if (!name) return
-    onAddStudent(name, Number(newRoll) || 0, Number(newMarks) || 0)
+    if (!name) {
+      setStudentError('Student name is required.')
+      return
+    }
+    const roll = Number(newRoll)
+    if (!Number.isInteger(roll) || roll <= 0) {
+      setStudentError('Roll number must be a positive integer.')
+      return
+    }
+    if (students.some((s) => s.rollNo === roll)) {
+      setStudentError(`Roll number ${roll} is already in use.`)
+      return
+    }
+    const marksVal = Number(newMarks)
+    if (newMarks === '' || Number.isNaN(marksVal) || marksVal < 0 || marksVal > 100) {
+      setStudentError('Marks must be between 0 and 100.')
+      return
+    }
+    onAddStudent(name, roll, marksVal)
     setNewName('')
     setNewRoll('')
     setNewMarks('')
   }
+
 
   return (
     <AnimatePresence>
@@ -291,8 +311,14 @@ export default function SettingsDrawer({
                       Add
                     </button>
                   </div>
+                  {studentError && (
+                    <p className="rounded bg-danger/10 p-1.5 text-xs text-danger">
+                      {studentError}
+                    </p>
+                  )}
                 </div>
               </section>
+
             </div>
 
             <div className="border-t border-line px-5 py-3">
