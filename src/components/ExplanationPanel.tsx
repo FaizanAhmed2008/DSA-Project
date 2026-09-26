@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { CheckIcon } from './icons'
+import { CheckIcon, SparklesIcon } from './icons'
 import type { SortStep } from '../types'
 
 interface ExplanationPanelProps {
@@ -8,11 +8,24 @@ interface ExplanationPanelProps {
   finished: boolean
 }
 
-function StudentRow({ name, marks }: { name: string; marks: number }) {
+function StudentComparisonCard({
+  name,
+  marks,
+  isLeft,
+}: {
+  name: string
+  marks: number
+  isLeft?: boolean
+}) {
   return (
-    <div className="flex items-center justify-between rounded-lg bg-surface-2 px-3 py-2">
-      <span className="truncate text-sm text-ink">{name}</span>
-      <span className="text-sm font-semibold tabular-nums text-ink">{marks}</span>
+    <div className="flex items-center justify-between rounded-xl border border-line bg-surface-2/60 px-3.5 py-2.5 backdrop-blur-md">
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-[10px] uppercase font-bold text-muted">
+          {isLeft ? 'Left [i]' : 'Right [i+1]'}
+        </span>
+        <span className="truncate text-xs font-semibold text-ink">{name}</span>
+      </div>
+      <span className="font-mono text-xs font-bold tabular-nums text-cyan-light">{marks} pts</span>
     </div>
   )
 }
@@ -21,70 +34,91 @@ export default function ExplanationPanel({ step, started, finished }: Explanatio
   const active = started && step !== null && !finished
 
   return (
-    <div className="rounded-xl border border-line bg-surface p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-          Current Step
-        </h2>
+    <div className="rounded-2xl glass-panel p-5">
+      {/* Header */}
+      <div className="mb-3.5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <SparklesIcon className="size-3.5 text-accent-light" />
+          <h2 className="text-xs font-bold uppercase tracking-wider text-muted">
+            Algorithm Logic
+          </h2>
+        </div>
+
         {active && (
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-accent">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan/40 bg-cyan/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-cyan-light">
             <span className="relative flex size-2">
-              <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" />
-              <span className="relative inline-flex size-2 rounded-full bg-accent" />
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-cyan opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-cyan" />
             </span>
-            Comparing
+            Step Active
           </span>
         )}
       </div>
 
       {finished ? (
-        <div className="flex items-start gap-2 rounded-lg border border-success/25 bg-success/10 px-3 py-2.5 text-xs leading-relaxed text-success">
-          <CheckIcon className="mt-0.5 size-3.5 shrink-0" />
-          <span>Ranking complete — the smallest marks bubbled to the end of the list.</span>
+        <div className="space-y-3">
+          <div className="flex items-start gap-2.5 rounded-xl border border-success/40 bg-success/10 p-3 text-xs leading-relaxed text-success">
+            <CheckIcon className="mt-0.5 size-4 shrink-0" />
+            <span>
+              <strong>Ranking Complete:</strong> All students are now ordered with the highest marks at the front and lowest at the back!
+            </span>
+          </div>
+          <div className="rounded-xl border border-line bg-surface-2/40 p-3 text-xs text-muted">
+            <p className="font-semibold text-ink">Early Exit / Efficiency</p>
+            <p className="mt-1">
+              Bubble Sort runs in <strong>O(n²)</strong> time worst-case, but stops early if a pass makes 0 swaps!
+            </p>
+          </div>
         </div>
       ) : active && step ? (
         <motion.div
-          key={`${step.pass}-${step.comparisonInPass}`}
-          initial={{ opacity: 0.5 }}
-          animate={{ opacity: 1 }}
+          key={`${step.pass}-${step.comparisonInPass}-${step.action}`}
+          initial={{ opacity: 0.7, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
           className="space-y-3"
         >
+          {/* Compared Students */}
           <div className="space-y-2">
-            <StudentRow name={step.left.name} marks={step.left.marks} />
-            <StudentRow name={step.right.name} marks={step.right.marks} />
+            <StudentComparisonCard name={step.left.name} marks={step.left.marks} isLeft={true} />
+            <StudentComparisonCard name={step.right.name} marks={step.right.marks} isLeft={false} />
           </div>
 
-          <div className="rounded-lg border border-line bg-base px-3 py-2 text-center">
-            <code className="text-sm font-semibold tabular-nums text-accent">
+          {/* Condition Evaluation */}
+          <div className="rounded-xl border border-line bg-base/80 p-3 text-center">
+            <div className="text-[11px] text-muted mb-1">Condition Check (Descending Order)</div>
+            <code className="font-mono text-sm font-bold tabular-nums text-accent-light">
               {step.left.marks} {step.swap ? '<' : '≥'} {step.right.marks}
             </code>
+            <p className="mt-1 text-[11px] text-muted">
+              {step.swap
+                ? 'Left is smaller than Right → SWAP needed'
+                : 'Left is greater or equal → Already sorted'}
+            </p>
           </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted">Action</span>
+          {/* Action Decision Pill */}
+          <div className="flex items-center justify-between rounded-xl border border-line bg-surface-2/40 px-3.5 py-2.5">
+            <span className="text-xs font-medium text-muted">Decision</span>
             <span
-              className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+              className={`rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider ${
                 step.swap
-                  ? 'border-warning/30 bg-warning/15 text-warning'
-                  : 'border-line bg-surface-2 text-muted'
+                  ? 'border border-warning/50 bg-warning/20 text-warning shadow-[0_0_12px_rgba(245,158,11,0.2)]'
+                  : 'border border-line bg-surface-3 text-muted'
               }`}
             >
-              {step.swap ? 'Swap' : 'No Swap'}
+              {step.swap ? 'SWAP POSITIONS' : 'KEEP IN PLACE'}
             </span>
           </div>
         </motion.div>
       ) : (
-        <div className="space-y-3">
-          <p className="text-sm leading-relaxed text-muted">
-            Press <span className="font-medium text-ink">Start Sorting</span> to run Bubble Sort,
-            or step through it with{' '}
-            <span className="font-medium text-ink">Next Step</span>.
+        <div className="space-y-3 text-xs text-muted">
+          <p className="leading-relaxed">
+            Click <strong className="text-cyan-light">Start Sorting</strong> or press <kbd className="rounded bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-ink">Space</kbd> to step through the comparisons.
           </p>
-          <div className="rounded-lg bg-surface-2 px-3 py-2.5 text-xs leading-relaxed text-muted">
-            <p className="font-medium text-ink/90">How Bubble Sort works</p>
+          <div className="rounded-xl border border-line bg-surface-2/40 p-3 leading-relaxed">
+            <p className="font-semibold text-ink">How Bubble Sort Works:</p>
             <p className="mt-1">
-              Compare adjacent students. If the left has fewer marks they are out of order, so
-              swap them. Repeat each pass until the list is sorted.
+              Compare adjacent students in pairs. If the left student has fewer marks than the right student, swap them so higher marks bubble up to Rank #1.
             </p>
           </div>
         </div>

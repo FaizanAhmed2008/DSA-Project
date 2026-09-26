@@ -13,6 +13,7 @@ import TopBar, { type NavTab } from '../components/TopBar'
 import { PlusIcon, SparklesIcon } from '../components/icons'
 import { defaultStudents, defaultSubjects } from '../data/defaults'
 import type { SortStep, Student, Subject } from '../types'
+import { soundFX } from '../utils/audio'
 import { clampMarks, generateSortSteps, makeId, sampleStudents } from '../utils/bubbleSort'
 
 function StateChip({
@@ -25,25 +26,25 @@ function StateChip({
   finished: boolean
 }) {
   let label = 'Ready'
-  let cls = 'border-line bg-surface-2 text-muted'
+  let cls = 'border-line bg-surface-2/60 text-muted'
   if (finished) {
     label = 'Complete'
-    cls = 'border-success/30 bg-success/10 text-success'
+    cls = 'border-success/40 bg-success/15 text-success shadow-[0_0_12px_rgba(16,185,129,0.2)]'
   } else if (running) {
     label = 'Sorting'
-    cls = 'border-accent/30 bg-accent/10 text-accent'
+    cls = 'border-cyan/40 bg-cyan/15 text-cyan-light shadow-[0_0_12px_rgba(6,182,212,0.2)]'
   } else if (started) {
     label = 'Paused'
-    cls = 'border-warning/30 bg-warning/10 text-warning'
+    cls = 'border-warning/40 bg-warning/15 text-warning shadow-[0_0_12px_rgba(245,158,11,0.2)]'
   }
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${cls}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-wider ${cls}`}
     >
       {(running || finished) && (
         <span
-          className={`size-1.5 rounded-full ${finished ? 'bg-success' : 'bg-accent'} ${
+          className={`size-2 rounded-full ${finished ? 'bg-success' : 'bg-cyan'} ${
             running ? 'animate-pulse' : ''
           }`}
         />
@@ -63,6 +64,7 @@ export default function Dashboard() {
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(60)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(true)
 
   const activeSubject = subjects.find((s) => s.id === activeSubjectId) ?? subjects[0]
   const started = currentStep >= 0 && steps.length > 0
@@ -82,14 +84,26 @@ export default function Dashboard() {
   useEffect(() => {
     if (!playing) return
     if (currentStep >= steps.length - 1) {
-      setPlaying(false)
-      return
+      const stopTimer = setTimeout(() => setPlaying(false), 0)
+      return () => clearTimeout(stopTimer)
     }
     const timer = setTimeout(() => {
       setCurrentStep((c) => Math.min(steps.length - 1, c + 1))
     }, speedInterval)
     return () => clearTimeout(timer)
   }, [playing, currentStep, steps.length, speedInterval])
+
+  // Play sound effect on step transitions
+  useEffect(() => {
+    if (!soundEnabled || !step) return
+    if (step.action === 'swap') {
+      soundFX.playSwap()
+    } else if (step.action === 'compare' && step.left) {
+      soundFX.playCompare(step.left.marks)
+    } else if (step.action === 'complete') {
+      soundFX.playComplete()
+    }
+  }, [currentStep, step, soundEnabled])
 
   // Reset sorting state without deleting students
   const resetSort = () => {
@@ -136,6 +150,12 @@ export default function Dashboard() {
     }
   }
 
+  const toggleSound = () => {
+    const next = !soundEnabled
+    setSoundEnabled(next)
+    soundFX.setEnabled(next)
+  }
+
   // Keyboard Shortcuts (Space, ArrowLeft, ArrowRight, R)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -170,7 +190,7 @@ export default function Dashboard() {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [playing, currentStep, steps.length, canRun])
+  })
 
   const handleSelectSubject = (id: string) => {
     if (!subjects.some((s) => s.id === id)) return
@@ -237,7 +257,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-base pb-12">
+    <div className="relative min-h-screen bg-base pb-16 selection:bg-cyan/30 selection:text-ink">
+      {/* Cyber Ambient Mesh Lighting Orbs */}
+      <div className="ambient-bg" aria-hidden>
+        <div className="ambient-orb-1" />
+        <div className="ambient-orb-2" />
+        <div className="ambient-orb-3" />
+      </div>
+
       <TopBar
         subjects={subjects}
         activeSubjectId={activeSubject.id}
@@ -247,45 +274,49 @@ export default function Dashboard() {
         onSelectSubject={handleSelectSubject}
         onOpenSettings={() => setSettingsOpen(true)}
         onLoadSample={handleLoadSample}
+        soundEnabled={soundEnabled}
+        onToggleSound={toggleSound}
       />
 
-      <main className="mx-auto max-w-6xl space-y-6 px-4 py-5 sm:px-6 sm:py-6">
+      <main className="relative z-10 w-full space-y-6 px-3 sm:px-6 lg:px-8 xl:px-10 py-5 sm:py-6">
         {/* TAB 1: VISUALIZER */}
         {activeTab === 'visualizer' && (
-          <div className="space-y-6">
+          <div className="w-full space-y-6">
             {/* Empty State when no students exist */}
             {students.length === 0 ? (
-              <div className="rounded-xl border border-line bg-surface p-10 text-center">
-                <div className="mx-auto grid size-12 place-items-center rounded-xl border border-line bg-surface-2 text-muted">
-                  <PlusIcon className="size-6" />
+              <div className="w-full rounded-2xl glass-panel p-12 text-center">
+                <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-accent/20 to-cyan/20 p-0.5 shadow-lg shadow-accent/20">
+                  <div className="grid size-full place-items-center rounded-[14px] bg-surface text-cyan">
+                    <PlusIcon className="size-6" />
+                  </div>
                 </div>
-                <h2 className="mt-4 text-base font-semibold text-ink">No Students in Classroom</h2>
-                <p className="mx-auto mt-1.5 max-w-md text-xs text-muted">
-                  Add students to start sorting and ranking, or load our ready-made sample classroom.
+                <h2 className="mt-4 text-lg font-bold text-ink">No Students in Classroom</h2>
+                <p className="mx-auto mt-1 max-w-md text-xs text-muted">
+                  Add student results to start sorting and ranking, or load our ready-made classroom sample.
                 </p>
-                <div className="mt-5 flex items-center justify-center gap-3">
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                   <button
                     type="button"
                     onClick={() => setActiveTab('students')}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-[#06202c] hover:bg-[#5ecbf8]"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-cyan px-4 py-2.5 text-xs font-bold text-slate-950 shadow-md shadow-accent/25 hover:shadow-cyan/35 transition-all"
                   >
-                    <PlusIcon className="size-3.5" />
+                    <PlusIcon className="size-4" />
                     Add Student
                   </button>
                   <button
                     type="button"
                     onClick={handleLoadSample}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-4 py-2 text-xs font-semibold text-accent hover:bg-accent/20"
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-cyan/40 bg-cyan/15 px-4 py-2.5 text-xs font-bold text-cyan-light hover:bg-cyan/25 transition-all"
                   >
-                    <SparklesIcon className="size-3.5" />
-                    Load Sample Students
+                    <SparklesIcon className="size-4" />
+                    Load Sample Classroom
                   </button>
                 </div>
               </div>
             ) : (
               <>
                 {/* Control Bar & Stats Panel Container */}
-                <section className="overflow-hidden rounded-xl border border-line bg-surface">
+                <section className="w-full overflow-hidden rounded-2xl glass-panel">
                   <Controls
                     playing={isRunning}
                     started={started}
@@ -308,7 +339,7 @@ export default function Dashboard() {
                   />
                 </section>
 
-                {/* THE MAIN BUBBLE SORT VISUALIZER (Cards / Bars Animated Centerpiece) */}
+                {/* THE MAIN BUBBLE SORT VISUALIZER (Cards Animated Centerpiece) */}
                 <BubbleSortVisualizer
                   students={students}
                   subjectId={activeSubject.id}
@@ -319,15 +350,15 @@ export default function Dashboard() {
                 />
 
                 {/* Secondary Panels: Ranking Table + Step Timeline / Explanation */}
-                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+                <div className="w-full grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_420px] 2xl:grid-cols-[minmax(0,1fr)_460px]">
                   {/* Live Table */}
-                  <section className="overflow-hidden rounded-xl border border-line bg-surface">
-                    <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
+                  <section className="overflow-hidden rounded-2xl glass-panel">
+                    <div className="flex items-center justify-between gap-3 border-b border-line bg-surface-2/40 px-5 py-3.5 sm:px-6 backdrop-blur-md">
                       <div className="min-w-0">
-                        <h2 className="text-sm font-semibold text-ink">
-                          {finished ? 'Ranking Complete' : 'Live Classroom Table'}
+                        <h2 className="text-sm font-bold text-ink">
+                          {finished ? 'Classroom Ranking Complete' : 'Live Standings Table'}
                         </h2>
-                        <p className="truncate text-xs text-muted">{activeSubject.name} Standings</p>
+                        <p className="truncate text-xs text-muted">{activeSubject.name} Current Order</p>
                       </div>
                       <StateChip started={started} running={isRunning} finished={finished} />
                     </div>
@@ -340,22 +371,22 @@ export default function Dashboard() {
                     />
 
                     {finished && lastStep && (
-                      <div className="flex flex-wrap items-center justify-between border-t border-line px-4 py-3 text-xs text-muted sm:px-5">
+                      <div className="flex flex-wrap items-center justify-between border-t border-line bg-surface-2/30 px-5 py-3.5 text-xs text-muted sm:px-6">
                         <div className="flex items-center gap-4">
                           <span>
                             Students <strong className="text-ink">{students.length}</strong>
                           </span>
                           <span>
-                            Comparisons <strong className="text-ink">{lastStep.comparisonCount}</strong>
+                            Comparisons <strong className="text-cyan-light">{lastStep.comparisonCount}</strong>
                           </span>
                           <span>
-                            Swaps <strong className="text-ink">{lastStep.swapCount}</strong>
+                            Swaps <strong className="text-warning">{lastStep.swapCount}</strong>
                           </span>
                         </div>
                         <button
                           type="button"
                           onClick={() => setActiveTab('ranking')}
-                          className="font-medium text-accent hover:underline"
+                          className="font-bold text-cyan-light hover:underline"
                         >
                           View Full Podium →
                         </button>
@@ -364,7 +395,7 @@ export default function Dashboard() {
                   </section>
 
                   {/* Right Column: Step History Timeline + Pedagogical Explanation */}
-                  <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+                  <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
                     <StepHistory
                       steps={steps}
                       currentStep={currentStep}
@@ -406,7 +437,7 @@ export default function Dashboard() {
         {activeTab === 'about' && <HowItWorksModal />}
       </main>
 
-      {/* Teacher Settings Drawer (Preserved from original project) */}
+      {/* Teacher Settings Drawer */}
       <SettingsDrawer
         open={settingsOpen}
         subjects={subjects}

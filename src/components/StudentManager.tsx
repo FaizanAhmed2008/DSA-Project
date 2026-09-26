@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import type { Student, Subject } from '../types'
 import { clampMarks } from '../utils/bubbleSort'
 import { PencilIcon, PlusIcon, SparklesIcon, TrashIcon } from './icons'
@@ -128,46 +129,48 @@ export default function StudentManager({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Top Banner & Quick Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface p-4 sm:p-5">
+      <div className="w-full flex flex-wrap items-center justify-between gap-4 rounded-2xl glass-panel p-5 sm:p-6">
         <div>
-          <h2 className="text-base font-semibold text-ink">Student Roster Management</h2>
+          <h2 className="text-base sm:text-lg font-bold text-ink">Student Roster Management</h2>
           <p className="text-xs text-muted">
-            Managing student marks for{' '}
-            <span className="font-semibold text-accent">{activeSubject.name}</span>.
+            Configure student scores for{' '}
+            <span className="font-semibold text-cyan-light">{activeSubject.name}</span>.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
+        <div className="flex flex-wrap items-center gap-2.5">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             type="button"
             onClick={onLoadSample}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-3.5 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/20"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-cyan/40 bg-cyan/15 px-4 py-2 text-xs font-semibold text-cyan-light transition-all hover:bg-cyan/25 shadow-sm"
           >
             <SparklesIcon className="size-3.5" />
-            Load Sample Students
-          </button>
+            Load Sample Classroom
+          </motion.button>
 
           {students.length > 0 && (
             <>
               {confirmClear ? (
-                <div className="flex items-center gap-1.5 rounded-lg border border-danger/40 bg-danger/10 p-1">
-                  <span className="px-2 text-xs font-medium text-danger">Clear all?</span>
+                <div className="flex items-center gap-1.5 rounded-xl border border-danger/40 bg-danger/15 p-1">
+                  <span className="px-2.5 text-xs font-medium text-danger">Clear all students?</span>
                   <button
                     type="button"
                     onClick={() => {
                       onClearAll()
                       setConfirmClear(false)
                     }}
-                    className="cursor-pointer rounded bg-danger px-2.5 py-1 text-xs font-semibold text-white hover:bg-danger/80"
+                    className="cursor-pointer rounded-lg bg-danger px-3 py-1 text-xs font-bold text-white hover:bg-danger/80"
                   >
-                    Yes, Clear
+                    Confirm
                   </button>
                   <button
                     type="button"
                     onClick={() => setConfirmClear(false)}
-                    className="cursor-pointer rounded bg-surface px-2 py-1 text-xs text-muted hover:text-ink"
+                    className="cursor-pointer rounded-lg bg-surface px-2.5 py-1 text-xs text-muted hover:text-ink"
                   >
                     Cancel
                   </button>
@@ -176,10 +179,10 @@ export default function StudentManager({
                 <button
                   type="button"
                   onClick={() => setConfirmClear(true)}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-line bg-surface-2 px-3 py-2 text-xs font-medium text-muted transition-colors hover:border-danger/40 hover:text-danger"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-line bg-surface-2/60 px-3.5 py-2 text-xs font-medium text-muted transition-all hover:border-danger/40 hover:text-danger"
                 >
                   <TrashIcon className="size-3.5" />
-                  Clear Students
+                  Clear Roster
                 </button>
               )}
             </>
@@ -187,17 +190,17 @@ export default function StudentManager({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
-        {/* Left Column: Add Student Form with strict validation */}
-        <section className="rounded-xl border border-line bg-surface p-4 sm:p-5">
+      <div className="w-full grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)] xl:grid-cols-[420px_minmax(0,1fr)]">
+        {/* Left Column: Add Student Form */}
+        <section className="rounded-2xl glass-panel p-5 sm:p-6">
           <div className="mb-4">
-            <h3 className="text-sm font-semibold text-ink">Add New Student</h3>
-            <p className="text-xs text-muted">Enter details to add to classroom ranking.</p>
+            <h3 className="text-sm font-bold text-ink">Add New Student</h3>
+            <p className="text-xs text-muted">Enroll a student into the ranking lineup.</p>
           </div>
 
           <form onSubmit={handleAdd} className="space-y-4" noValidate>
             <div>
-              <label htmlFor="student-name" className="mb-1 block text-xs font-medium text-slate-300">
+              <label htmlFor="student-name" className="mb-1.5 block text-xs font-semibold text-slate-300">
                 Student Full Name <span className="text-danger">*</span>
               </label>
               <input
@@ -206,13 +209,13 @@ export default function StudentManager({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Diya Patel"
-                className="w-full rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-ink placeholder:text-muted/60 outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent"
+                className="w-full rounded-xl border border-line bg-surface-2/80 px-3.5 py-2.5 text-xs sm:text-sm text-ink placeholder:text-muted/50 outline-none transition-all focus:border-cyan focus:ring-2 focus:ring-cyan/30"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="student-roll" className="mb-1 block text-xs font-medium text-slate-300">
+                <label htmlFor="student-roll" className="mb-1.5 block text-xs font-semibold text-slate-300">
                   Roll Number <span className="text-danger">*</span>
                 </label>
                 <input
@@ -222,12 +225,12 @@ export default function StudentManager({
                   value={rollNo}
                   onChange={(e) => setRollNo(e.target.value)}
                   placeholder="e.g. 104"
-                  className="w-full rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-ink tabular-nums placeholder:text-muted/60 outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent"
+                  className="w-full rounded-xl border border-line bg-surface-2/80 px-3.5 py-2.5 font-mono text-xs sm:text-sm text-ink placeholder:text-muted/50 outline-none transition-all focus:border-cyan focus:ring-2 focus:ring-cyan/30"
                 />
               </div>
 
               <div>
-                <label htmlFor="student-marks" className="mb-1 block text-xs font-medium text-slate-300">
+                <label htmlFor="student-marks" className="mb-1.5 block text-xs font-semibold text-slate-300">
                   Marks (0–100) <span className="text-danger">*</span>
                 </label>
                 <input
@@ -238,39 +241,49 @@ export default function StudentManager({
                   value={marks}
                   onChange={(e) => setMarks(e.target.value)}
                   placeholder="e.g. 88"
-                  className="w-full rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-ink tabular-nums placeholder:text-muted/60 outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent"
+                  className="w-full rounded-xl border border-line bg-surface-2/80 px-3.5 py-2.5 font-mono text-xs sm:text-sm text-ink placeholder:text-muted/50 outline-none transition-all focus:border-cyan focus:ring-2 focus:ring-cyan/30"
                 />
               </div>
             </div>
 
             {/* Error & Success Messages */}
             {errorMessage && (
-              <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger">
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-danger/40 bg-danger/15 px-3.5 py-2.5 text-xs text-danger"
+              >
                 {errorMessage}
-              </div>
+              </motion.div>
             )}
 
             {successMessage && (
-              <div className="rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-xs text-success">
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="rounded-xl border border-success/40 bg-success/15 px-3.5 py-2.5 text-xs text-success"
+              >
                 {successMessage}
-              </div>
+              </motion.div>
             )}
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-[#06202c] transition-colors hover:bg-[#5ecbf8]"
+              className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-cyan px-4 py-2.5 text-xs sm:text-sm font-bold text-slate-950 shadow-md shadow-accent/20 hover:shadow-cyan/30 transition-all"
             >
               <PlusIcon className="size-4" />
-              Add Student
-            </button>
+              Add to Classroom
+            </motion.button>
           </form>
         </section>
 
         {/* Right Column: Students Table with Inline Editing */}
-        <section className="overflow-hidden rounded-xl border border-line bg-surface">
-          <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
+        <section className="overflow-hidden rounded-2xl glass-panel">
+          <div className="flex items-center justify-between border-b border-line bg-surface-2/40 px-5 py-4 backdrop-blur-md">
             <div>
-              <h3 className="text-sm font-semibold text-ink">Classroom Roster</h3>
+              <h3 className="text-sm font-bold text-ink">Classroom Roster</h3>
               <p className="text-xs text-muted">
                 {students.length} {students.length === 1 ? 'student' : 'students'} enrolled
               </p>
@@ -278,22 +291,22 @@ export default function StudentManager({
           </div>
 
           {editError && (
-            <div className="border-b border-danger/30 bg-danger/10 px-5 py-2 text-xs text-danger">
+            <div className="border-b border-danger/40 bg-danger/15 px-5 py-2.5 text-xs text-danger">
               {editError}
             </div>
           )}
 
           <div className="overflow-x-auto">
             <table className="w-full min-w-[480px] text-left text-xs">
-              <thead className="border-b border-line bg-surface-2/40 text-[11px] font-semibold uppercase tracking-wider text-muted">
+              <thead className="border-b border-line bg-surface-2/40 font-mono text-[11px] font-bold uppercase tracking-wider text-muted">
                 <tr>
-                  <th className="px-4 py-3">Student</th>
-                  <th className="px-4 py-3">Roll No</th>
-                  <th className="px-4 py-3">Marks ({activeSubject.name})</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-5 py-3.5">Student</th>
+                  <th className="px-5 py-3.5">Roll No</th>
+                  <th className="px-5 py-3.5">Marks ({activeSubject.name})</th>
+                  <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line">
+              <tbody className="divide-y divide-line/60">
                 {students.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="py-12 text-center text-sm text-muted">
@@ -301,7 +314,7 @@ export default function StudentManager({
                       <button
                         type="button"
                         onClick={onLoadSample}
-                        className="cursor-pointer font-semibold text-accent underline hover:text-accent/80"
+                        className="cursor-pointer font-bold text-cyan underline hover:text-cyan-light"
                       >
                         Load Sample Students
                       </button>
@@ -315,46 +328,46 @@ export default function StudentManager({
 
                     if (isEditing) {
                       return (
-                        <tr key={student.id} className="bg-accent/5">
-                          <td className="px-4 py-2.5">
+                        <tr key={student.id} className="bg-accent/10">
+                          <td className="px-5 py-3">
                             <input
                               type="text"
                               value={editName}
                               onChange={(e) => setEditName(e.target.value)}
-                              className="w-full rounded border border-line bg-surface-2 px-2 py-1 text-xs text-ink outline-none focus:border-accent"
+                              className="w-full rounded-lg border border-cyan bg-surface px-2.5 py-1 text-xs text-ink outline-none"
                             />
                           </td>
-                          <td className="px-4 py-2.5">
+                          <td className="px-5 py-3">
                             <input
                               type="number"
                               value={editRoll}
                               onChange={(e) => setEditRoll(e.target.value)}
-                              className="w-20 rounded border border-line bg-surface-2 px-2 py-1 text-xs text-ink outline-none focus:border-accent"
+                              className="w-20 rounded-lg border border-cyan bg-surface px-2.5 py-1 font-mono text-xs text-ink outline-none"
                             />
                           </td>
-                          <td className="px-4 py-2.5">
+                          <td className="px-5 py-3">
                             <input
                               type="number"
                               min={0}
                               max={100}
                               value={editMarks}
                               onChange={(e) => setEditMarks(e.target.value)}
-                              className="w-20 rounded border border-line bg-surface-2 px-2 py-1 text-xs text-ink outline-none focus:border-accent"
+                              className="w-20 rounded-lg border border-cyan bg-surface px-2.5 py-1 font-mono text-xs text-ink outline-none"
                             />
                           </td>
-                          <td className="px-4 py-2.5 text-right">
+                          <td className="px-5 py-3 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => saveEdit(student.id)}
-                                className="cursor-pointer rounded bg-accent px-2.5 py-1 text-xs font-semibold text-[#06202c] hover:bg-[#5ecbf8]"
+                                className="cursor-pointer rounded-lg bg-cyan px-3 py-1 text-xs font-bold text-slate-950 hover:bg-cyan-light"
                               >
                                 Save
                               </button>
                               <button
                                 type="button"
                                 onClick={() => setEditingId(null)}
-                                className="cursor-pointer rounded border border-line bg-surface-2 px-2.5 py-1 text-xs text-muted hover:text-ink"
+                                className="cursor-pointer rounded-lg border border-line bg-surface-2 px-2.5 py-1 text-xs text-muted hover:text-ink"
                               >
                                 Cancel
                               </button>
@@ -365,38 +378,40 @@ export default function StudentManager({
                     }
 
                     return (
-                      <tr key={student.id} className="hover:bg-surface-2/30 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2.5">
-                            <span className="grid size-7 shrink-0 place-items-center rounded bg-surface-2 font-mono text-xs font-bold text-accent">
-                              {student.name.charAt(0).toUpperCase()}
-                            </span>
-                            <span className="font-semibold text-ink">{student.name}</span>
+                      <tr key={student.id} className="hover:bg-surface-2/40 transition-colors">
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-3">
+                            <div className="relative flex size-7.5 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent/20 to-cyan/20 p-0.5">
+                              <div className="flex size-full items-center justify-center rounded-[10px] bg-surface font-mono text-xs font-bold text-cyan-light">
+                                {student.name.charAt(0).toUpperCase()}
+                              </div>
+                            </div>
+                            <span className="font-semibold text-ink sm:text-sm">{student.name}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 font-mono text-muted">
+                        <td className="px-5 py-3.5 font-mono text-muted">
                           #{student.rollNo}
                         </td>
-                        <td className="px-4 py-3 font-semibold tabular-nums text-ink">
+                        <td className="px-5 py-3.5 font-mono text-sm font-bold tabular-nums text-ink">
                           {studentMarks}
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-5 py-3.5 text-right">
                           <div className="flex items-center justify-end gap-1">
                             <button
                               type="button"
                               onClick={() => startEdit(student)}
-                              className="grid size-7 cursor-pointer place-items-center rounded text-muted hover:bg-surface-2 hover:text-ink"
+                              className="grid size-8 cursor-pointer place-items-center rounded-lg text-muted hover:bg-surface-2 hover:text-cyan"
                               title="Edit student"
                             >
-                              <PencilIcon className="size-3.5" />
+                              <PencilIcon className="size-4" />
                             </button>
                             <button
                               type="button"
                               onClick={() => onDeleteStudent(student.id)}
-                              className="grid size-7 cursor-pointer place-items-center rounded text-muted hover:bg-surface-2 hover:text-danger"
+                              className="grid size-8 cursor-pointer place-items-center rounded-lg text-muted hover:bg-danger/10 hover:text-danger"
                               title="Delete student"
                             >
-                              <TrashIcon className="size-3.5" />
+                              <TrashIcon className="size-4" />
                             </button>
                           </div>
                         </td>

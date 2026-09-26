@@ -1,16 +1,22 @@
-import { CodeIcon } from './icons'
+import { motion } from 'framer-motion'
+import { CodeIcon, SparklesIcon } from './icons'
 
 export default function HowItWorksModal() {
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <div className="flex items-center gap-3">
-          <div className="grid size-10 place-items-center rounded-xl border border-accent/30 bg-accent/10 text-accent">
-            <CodeIcon className="size-5" />
+      <div className="relative overflow-hidden rounded-2xl glass-panel p-6">
+        <div className="pointer-events-none absolute -top-12 -left-12 size-48 rounded-full bg-accent/20 blur-3xl" />
+        <div className="flex items-center gap-3.5">
+          <div className="relative flex size-12 place-items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-cyan p-0.5 shadow-lg shadow-accent/25">
+            <div className="flex size-full items-center justify-center rounded-[14px] bg-base">
+              <CodeIcon className="size-6 text-cyan-light" />
+            </div>
           </div>
           <div>
-            <h2 className="text-lg font-bold text-ink">How Bubble Sort Works (Descending)</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-ink tracking-tight">
+              How Bubble Sort Works (Descending)
+            </h2>
             <p className="text-xs text-muted">
               Data Structures & Algorithms • Student Result Ranking System
             </p>
@@ -20,82 +26,82 @@ export default function HowItWorksModal() {
 
       {/* 3 Core Principles */}
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <span className="rounded bg-accent/15 px-2 py-0.5 font-mono text-[11px] font-bold text-accent">
+        <motion.div whileHover={{ y: -3 }} className="rounded-2xl glass-panel p-5">
+          <span className="inline-block rounded-lg bg-cyan/15 border border-cyan/30 px-2.5 py-0.5 font-mono text-[11px] font-bold text-cyan-light">
             1. Adjacent Comparison
           </span>
-          <h3 className="mt-2 text-sm font-semibold text-ink">Compare Left & Right</h3>
-          <p className="mt-1 text-xs leading-relaxed text-muted">
-            The algorithm iterates through the classroom, checking pairs <code className="text-accent">arr[i]</code> and <code className="text-accent">arr[i + 1]</code>.
-            For descending ranking, if <code className="text-warning">left &lt; right</code>, they are out of order.
+          <h3 className="mt-3 text-sm font-bold text-ink">Compare Left & Right</h3>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted">
+            The algorithm compares adjacent classroom pairs <code className="text-cyan-light font-mono">arr[i]</code> and <code className="text-cyan-light font-mono">arr[i + 1]</code>.
+            In descending ranking, if <code className="text-warning font-mono">left &lt; right</code>, they are in the wrong order.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <span className="rounded bg-warning/15 px-2 py-0.5 font-mono text-[11px] font-bold text-warning">
+        <motion.div whileHover={{ y: -3 }} className="rounded-2xl glass-panel p-5">
+          <span className="inline-block rounded-lg bg-warning/15 border border-warning/30 px-2.5 py-0.5 font-mono text-[11px] font-bold text-warning">
             2. Swapping
           </span>
-          <h3 className="mt-2 text-sm font-semibold text-ink">Bubble Smaller Down</h3>
-          <p className="mt-1 text-xs leading-relaxed text-muted">
-            When out of order, the two students exchange positions. Higher marks bubble toward the front (top ranks),
+          <h3 className="mt-3 text-sm font-bold text-ink">Bubble Smaller Down</h3>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted">
+            When out of order, the two students swap positions. Higher marks bubble toward Rank #1 (front),
             while lower marks sink toward the end of the array.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <span className="rounded bg-success/15 px-2 py-0.5 font-mono text-[11px] font-bold text-success">
+        <motion.div whileHover={{ y: -3 }} className="rounded-2xl glass-panel p-5">
+          <span className="inline-block rounded-lg bg-success/15 border border-success/30 px-2.5 py-0.5 font-mono text-[11px] font-bold text-success">
             3. Early Termination
           </span>
-          <h3 className="mt-2 text-sm font-semibold text-ink">Pass Optimization</h3>
-          <p className="mt-1 text-xs leading-relaxed text-muted">
-            After each pass, the smallest remaining student settles into their final slot.
-            If an entire pass completes with zero swaps, the list is already fully sorted and execution stops early.
+          <h3 className="mt-3 text-sm font-bold text-ink">Pass Optimization</h3>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted">
+            After each pass, the smallest mark settles into its final locked slot.
+            If an entire pass completes with zero swaps, the list is already sorted and stops early.
           </p>
-        </div>
+        </motion.div>
       </div>
 
       {/* Complexity Breakdown */}
-      <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-xl border border-line bg-surface p-3.5 text-center">
-          <span className="text-[11px] uppercase tracking-wider text-muted">Worst Case Time</span>
-          <div className="mt-1 font-mono text-base font-bold text-ink">O(n²)</div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-2xl glass-panel p-4 text-center">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Worst Case Time</span>
+          <div className="mt-1 font-mono text-xl font-bold text-ink">O(n²)</div>
           <span className="text-[10px] text-muted">Reverse sorted input</span>
         </div>
-        <div className="rounded-xl border border-line bg-surface p-3.5 text-center">
-          <span className="text-[11px] uppercase tracking-wider text-muted">Best Case Time</span>
-          <div className="mt-1 font-mono text-base font-bold text-success">O(n)</div>
+        <div className="rounded-2xl glass-panel p-4 text-center">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Best Case Time</span>
+          <div className="mt-1 font-mono text-xl font-bold text-success">O(n)</div>
           <span className="text-[10px] text-muted">Already sorted list</span>
         </div>
-        <div className="rounded-xl border border-line bg-surface p-3.5 text-center">
-          <span className="text-[11px] uppercase tracking-wider text-muted">Space Complexity</span>
-          <div className="mt-1 font-mono text-base font-bold text-accent">O(1)</div>
-          <span className="text-[10px] text-muted">In-place sorting</span>
+        <div className="rounded-2xl glass-panel p-4 text-center">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Space Complexity</span>
+          <div className="mt-1 font-mono text-xl font-bold text-cyan-light">O(1)</div>
+          <span className="text-[10px] text-muted">In-place swapping</span>
         </div>
-        <div className="rounded-xl border border-line bg-surface p-3.5 text-center">
-          <span className="text-[11px] uppercase tracking-wider text-muted">Stability</span>
-          <div className="mt-1 text-base font-bold text-success">Stable</div>
-          <span className="text-[10px] text-muted">Preserves relative ties</span>
+        <div className="rounded-2xl glass-panel p-4 text-center">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-muted">Stability</span>
+          <div className="mt-1 font-mono text-xl font-bold text-accent-light">Stable</div>
+          <span className="text-[10px] text-muted">Preserves equal ties</span>
         </div>
       </div>
 
       {/* C++ logic.cpp Code Showcase */}
-      <section className="overflow-hidden rounded-xl border border-line bg-surface">
-        <div className="flex items-center justify-between border-b border-line px-5 py-3 bg-surface-2/40">
+      <section className="overflow-hidden rounded-2xl glass-panel">
+        <div className="flex items-center justify-between border-b border-line bg-surface-2/40 px-6 py-4 backdrop-blur-md">
           <div className="flex items-center gap-2">
-            <span className="size-2 rounded-full bg-accent" />
-            <h3 className="font-mono text-xs font-semibold text-ink">logic.cpp (Core Algorithm)</h3>
+            <SparklesIcon className="size-4 text-cyan" />
+            <h3 className="font-mono text-xs font-bold text-ink">logic.cpp (C++ Core Implementation)</h3>
           </div>
-          <span className="text-[11px] text-muted">Exact project reference logic</span>
+          <span className="text-xs text-muted font-mono">Reference Algorithm</span>
         </div>
 
-        <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-slate-300">
+        <pre className="overflow-x-auto p-5 font-mono text-xs leading-relaxed text-slate-300 bg-base/60">
 {`void bubbleSortDescending(Student arr[], int n) {
     for (int pass = 0; pass < n - 1; pass++) {
         bool swapped = false;
 
         for (int i = 0; i < n - 1 - pass; i++) {
             // Descending order => the higher marks must come first.
-            // If the left student has fewer marks, swap them.
+            // If left student has fewer marks than right student, swap them.
             if (arr[i].marks < arr[i + 1].marks) {
                 swapStudents(arr[i], arr[i + 1]);
                 swapped = true;

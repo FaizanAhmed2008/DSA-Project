@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import type { SortStep, Student } from '../types'
 
 interface StatsPanelProps {
@@ -7,17 +8,34 @@ interface StatsPanelProps {
   subjectId?: string
 }
 
-function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function Stat({
+  label,
+  value,
+  color = 'text-ink',
+  highlight = false,
+}: {
+  label: string
+  value: string
+  color?: string
+  highlight?: boolean
+}) {
   return (
-    <div className="flex items-center gap-1.5 text-xs text-muted">
-      <span>{label}:</span>
-      <span
-        className={`font-semibold tabular-nums ${
-          highlight ? 'text-accent' : 'text-ink'
-        }`}
+    <div
+      className={`flex items-center gap-2 rounded-lg border px-2.5 py-1 text-xs transition-all ${
+        highlight
+          ? 'border-cyan/50 bg-cyan/15 text-cyan-light shadow-sm shadow-cyan/20'
+          : 'border-line/60 bg-surface-2/40 text-muted'
+      }`}
+    >
+      <span className="text-[11px] font-medium text-muted">{label}:</span>
+      <motion.span
+        key={value}
+        initial={{ scale: highlight ? 1.2 : 1 }}
+        animate={{ scale: 1 }}
+        className={`font-mono font-bold tabular-nums ${color}`}
       >
         {value}
-      </span>
+      </motion.span>
     </div>
   )
 }
@@ -25,7 +43,6 @@ function Stat({ label, value, highlight }: { label: string; value: string; highl
 export default function StatsPanel({ step, started, students, subjectId }: StatsPanelProps) {
   const active = started && step !== null
 
-  // Calculate subject marks stats if students and subjectId provided
   let highestMarks = 0
   let avgMarks = '—'
   if (students && students.length > 0 && subjectId) {
@@ -36,33 +53,39 @@ export default function StatsPanel({ step, started, students, subjectId }: Stats
   }
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-2.5 text-xs sm:px-5">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
+    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2.5 px-5 py-3 text-xs sm:px-6 bg-surface/40">
+      {/* Algorithm Performance Metrics */}
+      <div className="flex flex-wrap items-center gap-2">
         <Stat
           label="Pass"
-          value={active ? `${step.pass} / ${step.totalPasses}` : '—'}
+          value={active ? `${step.pass}/${step.totalPasses}` : '—'}
+          color="text-accent-light"
         />
         <Stat
           label="Step"
-          value={active ? `${step.stepIndex} / ${step.totalSteps}` : '—'}
+          value={active ? `${step.stepIndex}/${step.totalSteps}` : '—'}
+          color="text-cyan-light"
         />
         <Stat
           label="Comparisons"
           value={active ? String(step.comparisonCount) : '0'}
+          color="text-cyan"
           highlight={active && step.action === 'compare'}
         />
         <Stat
           label="Swaps"
           value={active ? String(step.swapCount) : '0'}
+          color="text-warning"
           highlight={active && step.action === 'swap'}
         />
       </div>
 
+      {/* Classroom Insights */}
       {students && students.length > 0 && (
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 border-t border-line/60 pt-1.5 sm:border-t-0 sm:pt-0">
-          <Stat label="Students" value={String(students.length)} />
-          <Stat label="Top Score" value={String(highestMarks)} />
-          <Stat label="Class Avg" value={avgMarks} />
+        <div className="flex flex-wrap items-center gap-2 border-t border-line/40 pt-2 sm:border-t-0 sm:pt-0">
+          <Stat label="Students" value={String(students.length)} color="text-ink" />
+          <Stat label="Highest" value={String(highestMarks)} color="text-success" />
+          <Stat label="Avg Marks" value={avgMarks} color="text-accent-light" />
         </div>
       )}
     </div>

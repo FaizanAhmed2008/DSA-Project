@@ -26,13 +26,13 @@ interface SettingsDrawerProps {
 }
 
 const inputCls =
-  'w-full rounded-lg border border-line bg-surface-2 px-2.5 py-1.5 text-sm text-ink placeholder:text-muted/60 outline-none transition-colors focus:border-accent/60 focus:ring-2 focus:ring-accent/15'
+  'w-full rounded-xl border border-line bg-surface-2 px-3 py-2 text-xs sm:text-sm text-ink placeholder:text-muted/50 outline-none transition-all focus:border-cyan focus:ring-2 focus:ring-cyan/30'
 
 const inlineBtn =
-  'grid size-7 cursor-pointer place-items-center rounded-md text-muted transition-colors hover:bg-surface-2 hover:text-ink'
+  'grid size-7 cursor-pointer place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-ink'
 
 const addBtn =
-  'inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-[#06202c] transition-colors hover:bg-[#5ecbf8]'
+  'inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-gradient-to-r from-accent to-cyan px-3.5 py-2 text-xs font-bold text-slate-950 shadow-sm transition-all hover:brightness-110'
 
 export default function SettingsDrawer({
   open,
@@ -100,7 +100,6 @@ export default function SettingsDrawer({
     setNewMarks('')
   }
 
-
   return (
     <AnimatePresence>
       {open && (
@@ -111,35 +110,36 @@ export default function SettingsDrawer({
             animate="visible"
             exit="exit"
             onClick={onClose}
-            className="fixed inset-0 z-40 bg-black/60"
+            className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
           />
           <motion.aside
             variants={drawer}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col border-l border-line bg-surface"
+            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col border-l border-line bg-surface/95 backdrop-blur-2xl shadow-2xl"
           >
-            <div className="flex items-center justify-between border-b border-line px-5 py-4">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-line px-6 py-4.5">
               <div>
-                <h2 className="text-base font-semibold text-ink">Teacher Panel</h2>
-                <p className="text-xs text-muted">Manage subjects and students</p>
+                <h2 className="text-base font-bold text-ink">Teacher Configuration</h2>
+                <p className="text-xs text-muted">Manage classroom subjects and student data</p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="grid size-8 cursor-pointer place-items-center rounded-lg text-muted transition-colors hover:bg-surface-2 hover:text-ink"
+                className="grid size-8 cursor-pointer place-items-center rounded-xl border border-line bg-surface-2 text-muted transition-colors hover:text-ink hover:border-line-bright"
                 aria-label="Close panel"
               >
                 <CloseIcon className="size-4" />
               </button>
             </div>
 
-            <div className="flex-1 space-y-7 overflow-y-auto px-5 py-5">
+            <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
               {/* Subjects */}
               <section>
-                <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
-                  Subjects
+                <h3 className="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">
+                  Classroom Subjects
                 </h3>
                 <div className="space-y-2">
                   {subjects.map((subject) => {
@@ -148,10 +148,10 @@ export default function SettingsDrawer({
                     return (
                       <div
                         key={subject.id}
-                        className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 transition-colors ${
+                        className={`flex items-center gap-2.5 rounded-xl border px-3 py-2 transition-all ${
                           isActive
-                            ? 'border-accent/40 bg-accent/10'
-                            : 'border-line bg-surface-2/40'
+                            ? 'border-cyan/50 bg-cyan/15 text-cyan-light shadow-sm shadow-cyan/15'
+                            : 'border-line bg-surface-2/40 hover:bg-surface-2/70'
                         }`}
                       >
                         <input
@@ -159,7 +159,7 @@ export default function SettingsDrawer({
                           name="subject"
                           checked={isActive}
                           onChange={() => onSelectSubject(subject.id)}
-                          className="size-4 accent-accent"
+                          className="size-4 accent-cyan"
                         />
                         {isRenaming ? (
                           <input
@@ -175,8 +175,8 @@ export default function SettingsDrawer({
                           />
                         ) : (
                           <span
-                            className={`flex-1 truncate text-sm ${
-                              isActive ? 'font-medium text-ink' : 'text-muted'
+                            className={`flex-1 truncate text-xs font-semibold ${
+                              isActive ? 'text-ink' : 'text-slate-300'
                             }`}
                           >
                             {subject.name}
@@ -206,36 +206,36 @@ export default function SettingsDrawer({
                   })}
                 </div>
 
-                <div className="mt-2.5 flex gap-2">
+                <div className="mt-3 flex gap-2">
                   <input
                     value={newSubject}
                     onChange={(e) => setNewSubject(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && submitSubject()}
-                    placeholder="New subject name"
+                    placeholder="New subject title"
                     className={inputCls}
                   />
                   <button type="button" onClick={submitSubject} className={addBtn}>
-                    <PlusIcon className="size-4" />
+                    <PlusIcon className="size-3.5" />
                     Add
                   </button>
                 </div>
               </section>
 
-              {/* Students */}
+              {/* Students quick list */}
               <section>
-                <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
-                  Students
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted">
+                  Students ({students.length})
                 </h3>
-                <p className="mb-3 rounded-lg bg-surface-2 px-3 py-2 text-xs text-muted">
-                  Marks below apply to{' '}
-                  <span className="font-semibold text-ink">{activeSubject?.name ?? '—'}</span>.
+                <p className="mb-3 rounded-xl border border-line bg-surface-2/50 px-3 py-2 text-xs text-muted">
+                  Editing marks specifically for{' '}
+                  <span className="font-bold text-cyan-light">{activeSubject?.name ?? '—'}</span>.
                 </p>
 
-                <div className="space-y-2.5">
+                <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
                   {students.map((student) => (
                     <div
                       key={student.id}
-                      className="space-y-2 rounded-lg border border-line bg-surface-2/40 p-2.5"
+                      className="space-y-2 rounded-xl border border-line bg-surface-2/50 p-3"
                     >
                       <div className="flex items-center gap-2">
                         <input
@@ -253,8 +253,8 @@ export default function SettingsDrawer({
                           <TrashIcon className="size-3.5" />
                         </button>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <label className="w-20 shrink-0 text-xs text-muted">Roll No</label>
+                      <div className="flex items-center gap-2 text-xs">
+                        <label className="w-16 shrink-0 text-muted">Roll No</label>
                         <input
                           type="number"
                           value={student.rollNo}
@@ -263,7 +263,7 @@ export default function SettingsDrawer({
                           }
                           className={`${inputCls} tabular-nums`}
                         />
-                        <label className="w-14 shrink-0 text-xs text-muted">Marks</label>
+                        <label className="w-12 shrink-0 text-muted">Marks</label>
                         <input
                           type="number"
                           min={0}
@@ -279,13 +279,13 @@ export default function SettingsDrawer({
                   ))}
                 </div>
 
-                <div className="mt-3 space-y-2 rounded-lg border border-dashed border-line bg-base/40 p-3">
-                  <p className="text-xs font-semibold text-muted">Add Student</p>
+                <div className="mt-3.5 space-y-2 rounded-xl border border-dashed border-line bg-base/50 p-3.5">
+                  <p className="text-xs font-bold text-ink">Quick Add Student</p>
                   <div className="flex items-center gap-2">
                     <input
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
-                      placeholder="Name"
+                      placeholder="Student Name"
                       className={inputCls}
                     />
                     <input
@@ -293,7 +293,7 @@ export default function SettingsDrawer({
                       value={newRoll}
                       onChange={(e) => setNewRoll(e.target.value)}
                       placeholder="Roll"
-                      className={`${inputCls} w-20 shrink-0 tabular-nums`}
+                      className={`${inputCls} w-20 shrink-0 font-mono`}
                     />
                   </div>
                   <div className="flex items-center gap-2">
@@ -304,30 +304,30 @@ export default function SettingsDrawer({
                       value={newMarks}
                       onChange={(e) => setNewMarks(e.target.value)}
                       placeholder={`Marks (${activeSubject?.name ?? ''})`}
-                      className={`${inputCls} flex-1 tabular-nums`}
+                      className={`${inputCls} flex-1 font-mono`}
                     />
                     <button type="button" onClick={submitStudent} className={addBtn}>
-                      <PlusIcon className="size-4" />
+                      <PlusIcon className="size-3.5" />
                       Add
                     </button>
                   </div>
                   {studentError && (
-                    <p className="rounded bg-danger/10 p-1.5 text-xs text-danger">
+                    <p className="rounded-lg bg-danger/15 p-2 text-xs text-danger">
                       {studentError}
                     </p>
                   )}
                 </div>
               </section>
-
             </div>
 
-            <div className="border-t border-line px-5 py-3">
+            {/* Footer */}
+            <div className="border-t border-line px-6 py-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full cursor-pointer rounded-lg border border-line bg-surface-2 px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-[#212c3a]"
+                className="w-full cursor-pointer rounded-xl bg-surface-2 border border-line px-4 py-2.5 text-xs font-bold text-ink transition-colors hover:border-line-bright hover:bg-surface-3"
               >
-                Done
+                Close Settings
               </button>
             </div>
           </motion.aside>
